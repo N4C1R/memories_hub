@@ -68,7 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = document.createElement('p');
             date.classList.add('card-date');
             try {
-                const dateObj = new Date(memory.date);
+                // Parse manually to prevent timezone shift (treat as local time)
+                const [year, month, day] = memory.date.split('-').map(Number);
+                const dateObj = new Date(year, month - 1, day);
+
+                if (isNaN(dateObj.getTime())) throw new Error('Invalid Date');
+
                 date.textContent = dateObj.toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'short',
@@ -88,20 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         const date = document.createElement('p');
                         date.classList.add('card-date');
 
-                        // Parse EXIF date format: "YYYY:MM:DD HH:MM:SS"
-                        // We only need the date part "YYYY:MM:DD" converted to "YYYY-MM-DD"
-                        const [datePart] = exifDate.split(" ");
-                        const isoDate = datePart.replace(/:/g, "-");
-
+                        // Parse EXIF format: "YYYY:MM:DD HH:MM:SS"
                         try {
-                            const dateObj = new Date(isoDate);
+                            const [datePart] = exifDate.split(" ");
+                            const [year, month, day] = datePart.split(":").map(Number);
+                            const dateObj = new Date(year, month - 1, day);
+
                             date.textContent = dateObj.toLocaleDateString(undefined, {
                                 year: 'numeric',
                                 month: 'short',
                                 day: 'numeric'
                             });
                         } catch (e) {
-                            date.textContent = isoDate;
+                            // Fallback to raw string if parsing fails
+                            date.textContent = exifDate.split(" ")[0].replace(/:/g, "-");
                         }
                         content.appendChild(date);
                     }
