@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
         content.appendChild(description);
 
         // Optional: Date Display
+        // Date Display
         if (memory.date) {
             const date = document.createElement('p');
             date.classList.add('card-date');
             try {
                 const dateObj = new Date(memory.date);
-                // Customize date format here
                 date.textContent = dateObj.toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'short',
@@ -78,6 +78,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 date.textContent = memory.date;
             }
             content.appendChild(date);
+        } else {
+            // Attempt to extract date from EXIF if not provided in JSON
+            if (typeof EXIF !== 'undefined') {
+                EXIF.getData(img, function () {
+                    const exifDate = EXIF.getTag(this, "DateTimeOriginal") || EXIF.getTag(this, "CreateDate");
+
+                    if (exifDate) {
+                        const date = document.createElement('p');
+                        date.classList.add('card-date');
+
+                        // Parse EXIF date format: "YYYY:MM:DD HH:MM:SS"
+                        // We only need the date part "YYYY:MM:DD" converted to "YYYY-MM-DD"
+                        const [datePart] = exifDate.split(" ");
+                        const isoDate = datePart.replace(/:/g, "-");
+
+                        try {
+                            const dateObj = new Date(isoDate);
+                            date.textContent = dateObj.toLocaleDateString(undefined, {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                            });
+                        } catch (e) {
+                            date.textContent = isoDate;
+                        }
+                        content.appendChild(date);
+                    }
+                });
+            }
         }
 
         // Assemble Card
