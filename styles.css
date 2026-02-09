@@ -1,0 +1,264 @@
+/* CSS Variables for Theming */
+:root {
+  --font-family: 'Quicksand', sans-serif;
+  --bg-color-1: #fff1f2; /* Soft Pink */
+  --bg-color-2: #e0f7fa; /* Soft Cyan */
+  --bg-color-3: #f3e5f5; /* Soft Purple */
+  --card-bg: rgba(255, 255, 255, 0.35); /* Glass effect */
+  --text-main: #5c4b51;
+  --text-sub: #786b72;
+  --accent-glow: rgba(138, 43, 226, 0.2);
+  --border-color: rgba(255, 255, 255, 0.6);
+  --transition-speed: 0.4s;
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, var(--bg-color-1), var(--bg-color-3), var(--bg-color-2));
+  background-size: 300% 300%;
+  animation: gradientSubtle 15s ease infinite;
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+@keyframes gradientSubtle {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+  z-index: 10;
+}
+
+header h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  color: #4a4a4a;
+  text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+  margin-bottom: 0.5rem;
+}
+
+header h1 span {
+  font-size: 2rem;
+  vertical-align: middle;
+}
+
+header p {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--text-sub);
+  opacity: 0.9;
+}
+
+/* Main Grid Container */
+main {
+  width: 100%;
+  padding: 20px;
+  max-width: 1200px;
+  flex: 1;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 10px;
+}
+
+/* Memory Cards (Glassmorphism) */
+.memory-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  overflow: hidden;
+  transition: transform var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1), 
+              box-shadow var(--transition-speed) ease;
+  cursor: pointer;
+  position: relative;
+  opacity: 0; /* JS will trigger fade-in */
+  transform: translateY(30px);
+}
+
+.memory-card.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.memory-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(100, 100, 200, 0.2);
+  z-index: 2;
+}
+
+.card-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Square crop for consistency */
+  overflow: hidden;
+  position: relative;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.memory-card:hover .card-image-wrapper img {
+  transform: scale(1.1);
+}
+
+.card-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.card-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.card-date {
+  font-size: 0.85rem;
+  color: var(--text-sub);
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+/* Footer */
+footer {
+  width: 100%;
+  text-align: center;
+  padding: 30px;
+  color: var(--text-sub);
+  font-size: 0.9rem;
+  margin-top: 40px;
+  background: rgba(255,255,255,0.2);
+}
+
+/* Lightbox Modal */
+.lightbox {
+  display: flex; /* Hidden by default via class 'hidden' */
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85); /* Black w/ opacity */
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox.hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lightbox-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 80vh;
+  border-radius: 12px;
+  box-shadow: 0 0 50px rgba(255,255,255,0.1);
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {transform: scale(0.8); opacity: 0;} 
+  to {transform: scale(1); opacity: 1;}
+}
+
+#caption {
+  margin: 15px auto;
+  text-align: center;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  max-width: 80%;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Floating Particles (Pseudo-elements or JS enhancement could add more) */
+.background-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.3) 0%, transparent 20%);
+  animation: floatOrb 20s infinite ease-in-out alternate;
+}
+
+@keyframes floatOrb {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-30px) scale(1.1); opacity: 0.8; }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  .grid-container {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    padding: 15px;
+  }
+  
+  .memory-card:hover {
+    transform: none; /* Disable lift on touch to avoid sticky hover states */
+  }
+}
