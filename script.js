@@ -113,9 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
         card.appendChild(imgWrapper);
         card.appendChild(content);
 
-        // Add Lightbox Event
-        card.addEventListener('click', () => {
-            openLightbox(memory);
+        // Add Lightbox Event & Particles
+        card.addEventListener('click', (e) => {
+            createParticles(e.clientX, e.clientY);
+            // Small delay for visual effect before opening
+            setTimeout(() => openLightbox(memory), 150);
         });
 
         // Add to Grid
@@ -174,4 +176,45 @@ document.addEventListener('DOMContentLoaded', () => {
             closeLightbox();
         }
     });
+
+    /**
+     * Creates cute particles at the click coordinates
+     */
+    function createParticles(x, y) {
+        const particleCount = 12;
+        const colors = ['#ff6b81', '#ff9ff3', '#feca57', '#48dbfb', '#ff9f43'];
+        const shapes = ['♥', '★', '✨', '•'];
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            // Random properties
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            particle.textContent = shape;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particle.style.color = color;
+
+            // Random direction
+            const angle = Math.random() * 2 * Math.PI;
+            const velocity = 50 + Math.random() * 100;
+            const tx = Math.cos(angle) * velocity + 'px';
+            const ty = Math.sin(angle) * velocity + 'px';
+            const rot = (Math.random() - 0.5) * 360 + 'deg';
+
+            particle.style.setProperty('--tx', tx);
+            particle.style.setProperty('--ty', ty);
+            particle.style.setProperty('--rot', rot);
+
+            document.body.appendChild(particle);
+
+            // Cleanup
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+            });
+        }
+    }
 });
